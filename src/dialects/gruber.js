@@ -737,9 +737,14 @@ define(['../markdown_helpers', './dialect_helpers', '../parser'], function (Mark
         // Always skip over the opening ticks.
         var m = text.match( /(`+)(([\s\S]*?)\1)/ );
 
-        if ( m && m[2] )
-          return [ m[1].length + m[2].length, [ "inlinecode", m[3] ] ];
-        else {
+        if ( m && m[2] ) {
+          var len = m[1].length + m[2].length;
+          if (m[1].length == 1) {
+            return [ len, [ "inlinecode", m[3] ] ];
+          } else {
+            return [ len, [ "code_block", m[3].replace(/^[\n]|[\n]$/g,'') ] ];
+          }
+        } else {
           // TODO: No matching end code found - warn!
           return [ 1, "`" ];
         }
